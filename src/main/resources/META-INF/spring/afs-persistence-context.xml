@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <beans profile="hsqldb">
+        <jdbc:embedded-database id="dataSource" type="HSQL"/>
+    </beans>
+
+    <beans profile="mongodb">
+        <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"/>
+
+        <bean id="mongoSpringTemplate" class="org.springframework.data.mongodb.core.MongoTemplate" c:mongo-ref="mongo"
+              c:databaseName="axonstudy"/>
+
+        <bean id="mongoTemplate" class="org.axonframework.eventstore.mongo.DefaultMongoTemplate" c:mongo-ref="mongo"
+              c:databaseName="axonstudy" c:domainEventsCollectionName="domainevents"
+              c:snapshotEventsCollectionName="snapshotevents" c:userName="" c:password=""/>
+
+        <bean id="mongoSagaTemplate" class="org.axonframework.saga.repository.mongo.DefaultMongoTemplate"
+              c:mongo-ref="mongo" c:databaseName="axonstudy" c:sagasCollectionName="snapshotevents" c:userName=""
+              c:password=""/>
+    </beans>
+</beans>
